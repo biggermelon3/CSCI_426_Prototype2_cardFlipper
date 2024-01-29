@@ -7,8 +7,8 @@ PhysicMaterial:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: court
-  dynamicFriction: 100
-  staticFriction: 100
-  bounciness: 0.35
+  dynamicFriction: 50
+  staticFriction: 50
+  bounciness: 0.45
   frictionCombine: 0
   bounceCombine: 0
