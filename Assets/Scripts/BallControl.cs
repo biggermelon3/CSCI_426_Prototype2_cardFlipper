@@ -21,4 +21,19 @@ public class BallControl : MonoBehaviour
         }
         currentCheckBox = newCheckBox;
     }
+    void Start()
+    {
+        // 设置初始标签为StrikeBall
+        gameObject.tag = "StrikeBall";
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        // 检查球是否撞击到地面
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            // 改变标签为Ball
+            gameObject.tag = "Ball";
+        }
+    }
 }

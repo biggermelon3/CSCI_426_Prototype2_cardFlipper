@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ball
+  - ball
+  - Ground
+  - StrikeBall
   layers:
   - Default
   - TransparentFX

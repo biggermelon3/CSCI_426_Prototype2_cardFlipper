@@ -9,6 +9,7 @@ public class SeekAndDestroy : MonoBehaviour
     private NavMeshAgent agent;
     private float timer;
     private GameObject target; // 当前目标
+    private bool isPaused = false;
 
     void Start()
     {
@@ -19,6 +20,12 @@ public class SeekAndDestroy : MonoBehaviour
 
     void Update()
     {
+        if (isPaused)
+        {
+            // 如果Agent处于暂停状态，不执行任何操作
+            return;
+        }
+
         timer += Time.deltaTime;
 
         if (timer >= searchInterval)
@@ -41,6 +48,27 @@ public class SeekAndDestroy : MonoBehaviour
                 UpdateTarget(); // 更新目标
             }
         }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("StrikeBall"))
+        {
+            StartCoroutine(PauseAgent(3f));
+        }
+    }
+
+    private IEnumerator PauseAgent(float duration)
+    {
+        isPaused = true;
+        agent.isStopped = true; // 停止NavMeshAgent
+
+        yield return new WaitForSeconds(duration); // 等待指定时间
+
+        isPaused = false;
+        agent.isStopped = false; // 重新启动NavMeshAgent
+
+        // 这里可以添加重新开始寻找球的逻辑
     }
 
     void UpdateTarget()

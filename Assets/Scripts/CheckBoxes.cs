@@ -11,6 +11,7 @@ public class CheckBoxes : MonoBehaviour
     private Coroutine generationCoroutine;
     public int firstTimeTrigger = 0;
     private ThrowAction throwAction;
+    private int triggerableIncreasedCount = 0; // 新增计数器
 
     private bool _triggerable = true;
     private bool triggerable
@@ -41,10 +42,10 @@ public class CheckBoxes : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Ball"))
+        if (other.CompareTag("Ball") | other.CompareTag("StrikeBall"))
         {
             ballsInsideCount++;
-            triggerable = false;
+            //triggerable = false;
 
             GameObject _effectObject = Instantiate(effectPrefab, transform.position, Quaternion.identity);
             _effectObject.transform.localScale = transform.localScale;
@@ -65,7 +66,7 @@ public class CheckBoxes : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Ball"))
+        if (other.CompareTag("Ball") | other.CompareTag("StrikeBall"))
         {
             ballsInsideCount--;
             if (ballsInsideCount == 0)
@@ -83,24 +84,17 @@ public class CheckBoxes : MonoBehaviour
 
     public void HandleBallDestruction(GameObject ball)
     {
-        if (ball && ball.CompareTag("Ball"))
+        if (ball && ball.CompareTag("Ball") )
         {
             ballsInsideCount--;
             Debug.Log("Ball destroyed in: " + gameObject.name + ", Remaining balls: " + ballsInsideCount);
 
             // 一旦所有球都离开，重置 triggerable 状态
-            if (ballsInsideCount == 0)
+            if (ballsInsideCount == 0 && triggerableIncreasedCount > 0)
             {
-                triggerable = true;
-
-                // 如果有正在进行的延迟生成效果协程，停止它
-                if (generationCoroutine != null)
-                {
-                    StopCoroutine(generationCoroutine);
-                    generationCoroutine = null;
-                }
+                triggerable = true; // 只有在计数器大于0时减少
+                triggerableIncreasedCount--; // 减少计数器
             }
-
             // 这里可以添加其他处理球体销毁的逻辑
             // 比如，如果你想在球体数量变化时做一些特别的处理
         }
@@ -120,6 +114,8 @@ public class CheckBoxes : MonoBehaviour
                 throwAction.GainPowerup();
                 firstTimeTrigger--;
             }
+            triggerable = false; // 第二个效果触发后增加
+            triggerableIncreasedCount++; // 增加计数器
 
         }
     }
@@ -128,6 +124,11 @@ public class CheckBoxes : MonoBehaviour
     {
         ballsInsideCount--;
         // 这里可以添加其他处理球体即将离开的逻辑
+        if (ballsInsideCount == 0 && triggerableIncreasedCount > 0)
+        {
+            triggerable = true; // 只有在计数器大于0时减少
+            triggerableIncreasedCount--; // 减少计数器
+        }
     }
 
 }
