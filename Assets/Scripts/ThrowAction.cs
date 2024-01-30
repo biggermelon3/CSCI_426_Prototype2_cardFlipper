@@ -1,44 +1,115 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ThrowAction : MonoBehaviour
 {
     public GameObject objectToSpawn;
     public float multiplier = 20f;
 
-    private void Update()
+    public int maxBalls = 5;  // æœ€å¤§çƒæ•°
+    private List<float> cooldownTimers;  // å­˜å‚¨æ¯ä¸ªçƒçš„å†·å´è®¡æ—¶å™¨
+    public float cooldownDuration = 2.0f;  // æ¯ä¸ªçƒçš„å†·å´æ—¶é—´
+    public List<Image> ballUIElements;  // å­˜å‚¨å¯¹åº”çƒçš„CD UIå…ƒç´ 
+
+ 
+
+    private void Start()
+    {
+        cooldownTimers = new List<float>() { 0 };
+        // åˆå§‹æ—¶éšè—æ‰€æœ‰çƒçš„UI
+        foreach (var uiElement in ballUIElements)
+        {
+            uiElement.gameObject.SetActive(false);
+        }
+        ballUIElements[0].gameObject.SetActive(true);
+    }
+
+    public void UseSkill()
+    {
+        for (int i = 0; i < cooldownTimers.Count; i++)
+        {
+            if (cooldownTimers[i] <= 0)  // æ£€æŸ¥æ˜¯å¦æœ‰çƒä¸åœ¨å†·å´ä¸­
+            {
+                // ä½¿ç”¨æŠ€èƒ½ï¼ˆæ‰”çƒï¼‰
+                ThrowBall(i);  // å®ç°çƒçš„æ‰”å‡ºé€»è¾‘
+                cooldownTimers[i] = cooldownDuration;  // é‡ç½®å†·å´è®¡æ—¶å™¨
+                break;  // åªæ‰”ä¸€ä¸ªçƒ
+            }
+        }
+    }
+
+    private void ThrowBall(int ballIndex)
+    {
+        // å®ç°æ‰”çƒçš„é€»è¾‘
+        // ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
+        Vector3 mousePosition = Input.mousePosition;
+
+        // ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        Vector3 worldMousePosition = Camera.main.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, 10f));
+
+        // ï¿½ï¿½ï¿½ã·½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        Vector3 direction = (worldMousePosition - transform.position).normalized;
+
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½Ä¾ï¿½ï¿½ï¿½
+        float distance = Vector3.Distance(worldMousePosition, transform.position);
+
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        float force = Mathf.Clamp(distance, 0f, 20f) * multiplier;
+
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å²¢Ê©ï¿½ï¿½ï¿½ï¿½
+        SpawnNewObject(direction, force);
+    }
+
+    public void GainPowerup()
+    {
+        
+        // å¯ç”¨ä¸€ä¸ªæ–°çš„çƒçš„UIå…ƒç´ 
+        int activeBalls = Mathf.Min(cooldownTimers.Count, maxBalls);
+        if (activeBalls < ballUIElements.Count)
+        {
+            ballUIElements[activeBalls].gameObject.SetActive(true);
+            cooldownTimers.Add(0);
+        }
+    }
+
+
+private void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            // »ñÈ¡Êó±êµã»÷Î»ÖÃ
-            Vector3 mousePosition = Input.mousePosition;
-
-            // ½«ÆÁÄ»×ø±ê×ª»»ÎªÊÀ½ç×ø±ê
-            Vector3 worldMousePosition = Camera.main.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, 10f));
-
-            // ¼ÆËã·½ÏòÏòÁ¿
-            Vector3 direction = (worldMousePosition - transform.position).normalized;
-
-            // ¼ÆËãÊó±êÓëÖĞĞÄµãµÄ¾àÀë
-            float distance = Vector3.Distance(worldMousePosition, transform.position);
-
-            // ¼ÆËãÁ¦Á¿
-            float force = Mathf.Clamp(distance, 0f, 20f) * multiplier;
-
-            // Éú³ÉÎïÌå²¢Ê©¼ÓÁ¦
-            SpawnNewObject(direction, force);
+            UseSkill();
+        }
+        for (int i = 0; i < cooldownTimers.Count; i++)
+        {
+            if (cooldownTimers[i] > 0)
+            {
+                cooldownTimers[i] -= Time.deltaTime;
+                // å‡è®¾æ¯ä¸ªçƒå¯¹è±¡çš„å­å¯¹è±¡ä¸Šæœ‰ä¸€ä¸ªåä¸º"CooldownImage"çš„Imageç»„ä»¶
+                Image cooldownImage = ballUIElements[i].transform.Find("Image").GetComponent<Image>();
+                cooldownImage.fillAmount = cooldownTimers[i] / cooldownDuration;
+            }
+                
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            GainPowerup();
         }
     }
 
     void SpawnNewObject(Vector3 direction, float force)
     {
-        // ´´½¨ÎïÌå
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         GameObject newObject = Instantiate(objectToSpawn, transform.position, Quaternion.identity);
         Rigidbody rb = newObject.GetComponent<Rigidbody>();
 
-        // Ê©¼ÓÁ¦£¬Á¦µÄ´óĞ¡¸ù¾İ¾àÀë¶¯Ì¬µ÷Õû
+        // Ê©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½Ğ¡ï¿½ï¿½ï¿½İ¾ï¿½ï¿½ë¶¯Ì¬ï¿½ï¿½ï¿½ï¿½
         rb.AddForce(direction * force, ForceMode.Impulse);
+        
     }
+
+    
 }
 

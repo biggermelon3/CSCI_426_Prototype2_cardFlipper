@@ -1,61 +1,93 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class CheckBoxes : MonoBehaviour
 {
     public GameObject effectPrefab;
-    private bool hasGeneratedFirstEffect = false; // ĞÂÔö±äÁ¿ÓÃÓÚ±ê¼ÇÊÇ·ñÉú³ÉÁËµÚÒ»¸öÌØĞ§
-    private bool ballInside = false; // ±ê¼ÇÇòÊÇ·ñÔÚ´¥·¢Æ÷ÄÚ
-    private Coroutine generationCoroutine; // ÓÃÓÚ´æ´¢Ğ­³ÌµÄÒıÓÃ
+    public GameObject secondEffectPrefab;
+    private int ballsInsideCount = 0; // è·Ÿè¸ªç¢°æ’ä½“å†…çƒçš„æ•°é‡
+    private Coroutine generationCoroutine;
+    public int firstTimeTrigger = 0;
+    private ThrowAction throwAction;
 
+    private bool _triggerable = true;
+    private bool triggerable
+    {
+        get => _triggerable;
+        set
+        {
+            if (_triggerable != value)
+            {
+                _triggerable = value;
+                if (_triggerable)
+                {
+                    GridGenerator.MinusOneFilledGridCount();
+                }
+                else
+                {
+                    GridGenerator.PlusOneFilledGridCount();
+                }
+            }
+        }
+    }
+
+    private void Awake()
+    {
+        throwAction = FindObjectOfType<ThrowAction>();
+
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("ball"))
+        if (other.CompareTag("Ball"))
         {
-            ballInside = true;
+            ballsInsideCount++;
+            triggerable = false;
+
+            GameObject _effectObject = Instantiate(effectPrefab, transform.position, Quaternion.identity);
+            _effectObject.transform.localScale = transform.localScale;
+
             if (generationCoroutine == null)
             {
-                // ¿ªÊ¼Ğ­³Ì
-                generationCoroutine = StartCoroutine(GenerateEffectAfterDelay());
+                generationCoroutine = StartCoroutine(GenerateSecondEffectAfterDelay());
             }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("ball"))
+        if (other.CompareTag("Ball"))
         {
-            ballInside = false;
-            // Èç¹ûÇòÀë¿ªÁË£¬Í£Ö¹Ğ­³Ì
-            if (generationCoroutine != null)
+            ballsInsideCount--;
+            if (ballsInsideCount == 0)
             {
-                StopCoroutine(generationCoroutine);
-                generationCoroutine = null;
+                triggerable = true;
+
+                if (generationCoroutine != null)
+                {
+                    StopCoroutine(generationCoroutine);
+                    generationCoroutine = null;
+                }
             }
         }
     }
 
-    private IEnumerator GenerateEffectAfterDelay()
+    private IEnumerator GenerateSecondEffectAfterDelay()
     {
-        // µÈ´ı3Ãë
         yield return new WaitForSeconds(3f);
 
-        // Éú³ÉÌØĞ§
-        Instantiate(effectPrefab, transform.position, Quaternion.identity);
-
-        // Èç¹ûÇòÈÔÈ»ÔÚ´¥·¢Æ÷ÄÚ£¬¼ÌĞøµÈ´ı3ÃëÉú³ÉÏÂÒ»¸öÌØĞ§
-        if (ballInside)
+        if (ballsInsideCount > 0)
         {
-            generationCoroutine = StartCoroutine(GenerateEffectAfterDelay());
+            Instantiate(secondEffectPrefab, transform.position + Vector3.up, Quaternion.identity);
+            if (firstTimeTrigger > 0)
+            {
+                //ç”Ÿæˆä¸€ä¸ªåŠ çƒcdçš„æŠ€èƒ½ && æ’­æ”¾ä¸€ä¸ªè·å¾—æŠ€èƒ½çš„åŠ¨ç”»
+                throwAction.GainPowerup();
+                firstTimeTrigger--;
+            }
+
         }
-    }
-
-    private void GenerateSecondEffect()
-    {
-        // Generate the second effectPrefab when a ball stays for 3 seconds
-        Instantiate(effectPrefab, transform.position + Vector3.up, Quaternion.identity);
-
     }
 }

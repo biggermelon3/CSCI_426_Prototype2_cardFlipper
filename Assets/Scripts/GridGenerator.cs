@@ -5,19 +5,23 @@ using UnityEngine;
 public class GridGenerator : MonoBehaviour
 {
     public GameObject gridCellPrefab;
-    public Transform parentTransform; // Ä¸Ìå
+    public Transform parentTransform; // Ä¸ï¿½ï¿½
     public Vector3 gridSize = new Vector3(20f, 1f, 30f);
     public int rows = 6;
     public int columns = 9;
 
     private List<Transform> gridCells = new List<Transform>();
 
-    public static int secondEffectCount = 0; // ÓÃÓÚ¸ú×ÙÉú³ÉµÚ¶ş¸öÌØĞ§µÄ¸ñ×ÓÊıÁ¿
-    public static int TargetSecondEffectCount = 10; // ÉèÖÃÄ¿±êÉú³ÉµÚ¶ş¸öÌØĞ§µÄ¸ñ×ÓÊıÁ¿
+    public static int secondEffectCount = 0; // ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÉµÚ¶ï¿½ï¿½ï¿½ï¿½ï¿½Ğ§ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public static int TargetSecondEffectCount = 10; // ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ÉµÚ¶ï¿½ï¿½ï¿½ï¿½ï¿½Ğ§ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public int maxFirstTimeTriggers = 10;
+    public int currentFirstTimeTriggers = 0;
+    public List<GameObject> spawnedObjects = new List<GameObject>();
 
     void Start()
     {
         GenerateGrid();
+        TargetSecondEffectCount = rows * columns;
     }
 
     private void Update()
@@ -26,7 +30,7 @@ public class GridGenerator : MonoBehaviour
         if (secondEffectCount >= TargetSecondEffectCount)
         {
             Debug.Log("Player has passed the level!");
-            // ÔÚÕâÀï¿ÉÒÔ´¥·¢¹ı¹ØµÄ²Ù×÷
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄ²ï¿½ï¿½ï¿½
         }
     }
 
@@ -43,16 +47,60 @@ public class GridGenerator : MonoBehaviour
                 GameObject gridCell = Instantiate(gridCellPrefab, position, Quaternion.identity, parentTransform);
                 gridCell.transform.localScale = cellSize;
                 gridCells.Add(gridCell.transform);
+                // è·å–æˆ–æ·»åŠ  SpawnedObject è„šæœ¬å¹¶è®¾ç½® firstTimeTrigger
+                CheckBoxes spawnedScript = gridCell.GetComponent<CheckBoxes>();
+                if (spawnedScript == null)
+                {
+                    spawnedScript = gridCell.AddComponent<CheckBoxes>();
+                }
+
+                // éšæœºå†³å®šæ˜¯å¦è®¾ç½® firstTimeTrigger ä¸º 1
+                if (currentFirstTimeTriggers < maxFirstTimeTriggers && Random.Range(0, 4) == 1)
+                {
+                    spawnedScript.firstTimeTrigger = 1;
+                    currentFirstTimeTriggers++;
+                    // æ·»åŠ åˆ°åˆ—è¡¨
+                    spawnedObjects.Add(gridCell);
+                }
+                else
+                {
+                    spawnedScript.firstTimeTrigger = 0;
+                }
+
+            }
+            
+        }
+        // å¦‚æœå·²ç”Ÿæˆå¯¹è±¡è¶…è¿‡æœ€å¤§æ•°é‡ï¼Œç¡®ä¿åªæœ‰äº”ä¸ª firstTimeTrigger ä¸º 1
+        if (spawnedObjects.Count > maxFirstTimeTriggers)
+        {
+            AdjustFirstTimeTriggers();
+        }
+
+
+    }
+
+    // è°ƒæ•´ firstTimeTrigger ç¡®ä¿åªæœ‰äº”ä¸ªä¸º 1
+    private void AdjustFirstTimeTriggers()
+    {
+        while (currentFirstTimeTriggers > maxFirstTimeTriggers)
+        {
+            // ä»åˆ—è¡¨ä¸­éšæœºé€‰æ‹©ä¸€ä¸ªå¯¹è±¡å¹¶æ›´æ”¹å…¶ firstTimeTrigger
+            int indexToChange = Random.Range(0, spawnedObjects.Count);
+            CheckBoxes spawnedScript = spawnedObjects[indexToChange].GetComponent<CheckBoxes>();
+            if (spawnedScript.firstTimeTrigger == 1)
+            {
+                spawnedScript.firstTimeTrigger = 0;
+                currentFirstTimeTriggers--;
             }
         }
     }
 
     public static void PlusOneFilledGridCount()
     {
-        secondEffectCount++; // Ôö¼ÓµÚ¶ş¸öÌØĞ§¸ñ×ÓµÄÊıÁ¿
+        secondEffectCount++; // ï¿½ï¿½ï¿½ÓµÚ¶ï¿½ï¿½ï¿½ï¿½ï¿½Ğ§ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½
     }
     public static void MinusOneFilledGridCount()
     {
-        secondEffectCount--; // Ôö¼ÓµÚ¶ş¸öÌØĞ§¸ñ×ÓµÄÊıÁ¿
+        secondEffectCount--; // ï¿½ï¿½ï¿½ÓµÚ¶ï¿½ï¿½ï¿½ï¿½ï¿½Ğ§ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½
     }
 }
