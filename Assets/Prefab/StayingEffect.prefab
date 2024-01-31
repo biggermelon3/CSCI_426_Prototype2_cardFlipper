@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6993479436534470033}
-  - component: {fileID: 2694525407424152894}
   - component: {fileID: 8727658487408615136}
   - component: {fileID: 164118399794139357}
   m_Layer: 0
@@ -34,21 +33,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2694525407424152894
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6193719090210114406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 597a27d671023476b919ba422da1069d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  effectMaterial: {fileID: 0}
-  effectDuration: 2
-  debugSaySomething: EffecttwoPlay!
 --- !u!23 &8727658487408615136
 MeshRenderer:
   m_ObjectHideFlags: 0
