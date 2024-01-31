@@ -70,3 +70,4 @@ MonoBehaviour:
   secondEffectPrefab: {fileID: 6193719090210114406, guid: 5c793a8e895c74f72a448d55eff0b11c, type: 3}
   ballsInsideCount: 0
   firstTimeTrigger: 0
+  SkillEffect: {fileID: 3125908671876608230, guid: 2f94dae69a18c4c57b960b1dab994208, type: 3}

@@ -13,6 +13,7 @@ public class CheckBoxes : MonoBehaviour
     private ThrowAction throwAction;
     private int triggerableIncreasedCount = 0; // 新增计数器
     private GameObject secondEffectInstance; // 用于存储生成的第二个效果的实例
+    public GameObject SkillEffect;
 
 
     private bool _triggerable = true;
@@ -137,6 +138,9 @@ public class CheckBoxes : MonoBehaviour
             if (firstTimeTrigger > 0)
             {
                 //生成一个加球cd的技能 && 播放一个获得技能的动画
+                GameObject skilleffect = Instantiate(SkillEffect, transform.position + Vector3.up * 0.6f, Quaternion.identity);
+                skilleffect.transform.localScale = transform.localScale;
+
                 throwAction.GainPowerup();
                 firstTimeTrigger--;
             }

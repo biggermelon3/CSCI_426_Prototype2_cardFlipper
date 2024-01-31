@@ -14,7 +14,7 @@ public class GridGenerator : MonoBehaviour
 
     public static int secondEffectCount = 0; // ���ڸ������ɵڶ�����Ч�ĸ�������
     public static int TargetSecondEffectCount = 10; // ����Ŀ�����ɵڶ�����Ч�ĸ�������
-    public int maxFirstTimeTriggers = 10;
+    public int maxFirstTimeTriggers = 7;
     public int currentFirstTimeTriggers = 0;
     public List<GameObject> spawnedObjects = new List<GameObject>();
 
