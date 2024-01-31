@@ -18,7 +18,7 @@ public class EffectPlayer : MonoBehaviour
 
     private IEnumerator PlayEffect()
     {
-        Debug.Log(debugSaySomething);
+       // Debug.Log(debugSaySomething);
         // 假设特效是通过改变材质的某个属性实现的
         // 这里添加特效播放的逻辑
 

@@ -127,4 +127,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c8a6feffa8cb47c188ffb2bbf0c9129, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentCheckBox: {fileID: 0}
+  currentCheckBox: {fileID: 5400512474027723774, guid: 19a0831f8bc37ed4ca6918ab59097ed6, type: 3}

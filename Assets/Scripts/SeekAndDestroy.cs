@@ -52,9 +52,10 @@ public class SeekAndDestroy : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        Debug.Log(collision.gameObject.tag);
         if (collision.gameObject.CompareTag("StrikeBall"))
         {
-            StartCoroutine(PauseAgent(3f));
+            StartCoroutine(PauseAgent(5f));
         }
     }
 

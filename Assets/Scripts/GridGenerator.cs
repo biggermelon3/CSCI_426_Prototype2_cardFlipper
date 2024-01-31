@@ -30,7 +30,7 @@ public class GridGenerator : MonoBehaviour
         if (secondEffectCount >= TargetSecondEffectCount)
         {
             Debug.Log("Player has passed the level!");
-            // ��������Դ������صĲ���
+            EndMenu.winState = true;
         }
     }
 

@@ -14,7 +14,9 @@ public class ThrowAction : MonoBehaviour
     public float cooldownDuration = 2.0f;  // 每个球的冷却时间
     public List<Image> ballUIElements;  // 存储对应球的CD UI元素
 
- 
+    AudioSource audioData;
+
+
 
     private void Start()
     {
@@ -25,6 +27,8 @@ public class ThrowAction : MonoBehaviour
             uiElement.gameObject.SetActive(false);
         }
         ballUIElements[0].gameObject.SetActive(true);
+
+        audioData = GetComponent<AudioSource>();
     }
 
     public void UseSkill()
@@ -35,6 +39,7 @@ public class ThrowAction : MonoBehaviour
             {
                 // 使用技能（扔球）
                 ThrowBall(i);  // 实现球的扔出逻辑
+                audioData.Play(0);
                 cooldownTimers[i] = cooldownDuration;  // 重置冷却计时器
                 break;  // 只扔一个球
             }

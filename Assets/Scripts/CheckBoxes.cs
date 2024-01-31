@@ -14,6 +14,12 @@ public class CheckBoxes : MonoBehaviour
     private int triggerableIncreasedCount = 0; // 新增计数器
 
     private bool _triggerable = true;
+    AudioSource audioSource;
+
+    private void Update()
+    {
+
+    }
     private bool triggerable
     {
         get => _triggerable;
@@ -29,6 +35,7 @@ public class CheckBoxes : MonoBehaviour
                 else
                 {
                     GridGenerator.PlusOneFilledGridCount();
+
                 }
             }
         }
@@ -112,11 +119,11 @@ public class CheckBoxes : MonoBehaviour
             {
                 //生成一个加球cd的技能 && 播放一个获得技能的动画
                 throwAction.GainPowerup();
+                audioSource.Play();
                 firstTimeTrigger--;
             }
             triggerable = false; // 第二个效果触发后增加
             triggerableIncreasedCount++; // 增加计数器
-
         }
     }
 
