@@ -49,8 +49,10 @@ public class CheckBoxes : MonoBehaviour
             ballsInsideCount++;
             //triggerable = false;
 
-            GameObject _effectObject = Instantiate(effectPrefab, transform.position, Quaternion.identity);
-            _effectObject.transform.localScale = transform.localScale;
+            GameObject _effectObject = Instantiate(effectPrefab, transform.position + Vector3.up * 0.6f, Quaternion.identity);
+            Vector3 scale = transform.localScale;  // 获取当前对象的缩放值
+            Vector3 newVector = new Vector3(scale.x, 0.1f, scale.x);
+            _effectObject.transform.localScale = newVector;
 
             BallControl ballScript = other.GetComponent<BallControl>();
             if (ballScript != null)
@@ -75,7 +77,7 @@ public class CheckBoxes : MonoBehaviour
             ballsInsideCount--;
             if (ballsInsideCount == 0)
             {
-                triggerable = true;
+                //triggerable = true;
 
                 if (generationCoroutine != null)
                 {
@@ -119,15 +121,19 @@ public class CheckBoxes : MonoBehaviour
 
     private IEnumerator GenerateSecondEffectAfterDelay()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1.5f);
 
         if (ballsInsideCount > 0)
         {
-            if (secondEffectInstance != null)
-            {
-                Destroy(secondEffectInstance);
-            }
-            secondEffectInstance =  Instantiate(secondEffectPrefab, transform.position + Vector3.up, Quaternion.identity);
+
+
+            secondEffectInstance = Instantiate(secondEffectPrefab, transform.position + Vector3.up * 0.6f, Quaternion.identity); ;
+
+            Vector3 scale = transform.localScale;  // 获取当前对象的缩放值
+            Vector3 newVector = new Vector3(scale.x, 0.1f, scale.x);
+            secondEffectInstance.transform.localScale = newVector;
+            
+            
             if (firstTimeTrigger > 0)
             {
                 //生成一个加球cd的技能 && 播放一个获得技能的动画
@@ -143,14 +149,15 @@ public class CheckBoxes : MonoBehaviour
 
     public void HandleBallExiting()
     {
-        ballsInsideCount--;
+        
         // 这里可以添加其他处理球体即将离开的逻辑
-        //if (ballsInsideCount == 0 && triggerableIncreasedCount > 0)
-        //{
+        if (ballsInsideCount == 0 && triggerableIncreasedCount > 0)
+        {
+            ballsInsideCount--;
         //    triggerable = true; // 只有在计数器大于0时减少
         //    triggerableIncreasedCount--; // 减少计数器
-            
-        //}
+
+        }
     }
 
 }
